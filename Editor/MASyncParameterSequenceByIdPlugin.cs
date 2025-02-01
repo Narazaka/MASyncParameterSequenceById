@@ -69,11 +69,14 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
                     Directory.CreateDirectory(directory);
                     AssetDatabase.CreateAsset(asset, assetPath);
                 }
-                if (Path.GetFileNameWithoutExtension(assetPath) != preferredAssetName)
+                if (CurrentPlatform == component.PrimaryPlatform)
                 {
-                    var newPath = $"{Path.GetDirectoryName(assetPath)}/{preferredAssetName}.asset";
-                    AssetDatabase.MoveAsset(assetPath, newPath);
-                    assetPath = newPath;
+                    if (Path.GetFileNameWithoutExtension(assetPath) != preferredAssetName)
+                    {
+                        var newPath = $"{Path.GetDirectoryName(assetPath)}/{preferredAssetName}.asset";
+                        AssetDatabase.MoveAsset(assetPath, newPath);
+                        assetPath = newPath;
+                    }
                 }
                 var parameters = AssetDatabase.LoadAssetAtPath<VRCExpressionParameters>(assetPath);
 
@@ -83,6 +86,21 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
 
                 Object.DestroyImmediate(component);
             });
+        }
+
+        private static ModularAvatarSyncParameterSequence.Platform? CurrentPlatform
+        {
+            get
+            {
+                switch (EditorUserBuildSettings.activeBuildTarget)
+                {
+                    case BuildTarget.Android: return ModularAvatarSyncParameterSequence.Platform.Android;
+                    case BuildTarget.iOS: return ModularAvatarSyncParameterSequence.Platform.iOS;
+                    case BuildTarget.StandaloneWindows64: return ModularAvatarSyncParameterSequence.Platform.PC;
+                    case BuildTarget.StandaloneLinux64: return ModularAvatarSyncParameterSequence.Platform.PC; // for CI
+                    default: return null;
+                }
+            }
         }
 
         class Error : IError

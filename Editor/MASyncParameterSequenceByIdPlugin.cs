@@ -1,5 +1,6 @@
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,20 +22,10 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
 
         protected override void Configure()
         {
-            InPhase(BuildPhase.Resolving).Run(DisplayName, ctx =>
+            InPhase(BuildPhase.Resolving).Run($"{DisplayName} Add Component", ctx =>
             {
-                if (VRC_SdkBuilder.ActiveBuildType == VRC_SdkBuilder.BuildType.Test)
-                {
-                    return;
-                }
-                var components = ctx.AvatarRootTransform.GetComponentsInChildren<MASyncParameterSequenceById>(true);
-                if (components.Length == 0) return;
-                if (components.Length > 1)
-                {
-                    ErrorReport.ReportError(new Error("Multiple MASyncParameterSequenceById components found in the avatar. Only one is allowed."));
-                    return;
-                }
-                var component = components[0];
+                var component = FetchComponent(ctx);
+                if (component == null) return;
 
                 var pipeline = ctx.AvatarDescriptor.GetComponent<PipelineManager>();
                 if (pipeline == null)
@@ -69,6 +60,7 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
                     assetPath = $"{directory}/{asset.name}.asset";
                     Directory.CreateDirectory(directory);
                     AssetDatabase.CreateAsset(asset, assetPath);
+                    Debug.Log($"[{DisplayName}] Created new asset at \"{assetPath}\"");
                 }
                 if (CurrentPlatform == component.PrimaryPlatform)
                 {
@@ -76,6 +68,7 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
                     {
                         var newPath = $"{Path.GetDirectoryName(assetPath)}/{preferredAssetName}.asset";
                         AssetDatabase.MoveAsset(assetPath, newPath);
+                        Debug.Log($"[{DisplayName}] Renamed asset \"{assetPath}\" to \"{newPath}\"");
                         assetPath = newPath;
                     }
                 }
@@ -85,8 +78,44 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
                 sync.PrimaryPlatform = component.PrimaryPlatform;
                 sync.Parameters = parameters;
 
+                ctx.GetState<State>().AssetPath = assetPath;
+            });
+            InPhase(BuildPhase.Transforming).AfterPlugin("nadena.dev.modular-avatar").Run($"{DisplayName} Clean", ctx =>
+            {
+                var component = FetchComponent(ctx);
+                if (component == null) return;
+
+                var state = ctx.GetState<State>();
+                if (state == null) return;
+                if (state.AssetPath == null) return;
+                var assetPath = state.AssetPath;
+                var parameters = AssetDatabase.LoadAssetAtPath<VRCExpressionParameters>(assetPath);
+                if (parameters == null) return;
+                if (parameters.parameters.Length == 0)
+                {
+                    AssetDatabase.DeleteAsset(assetPath);
+                    Debug.Log($"[{DisplayName}] Deleted asset \"{assetPath}\" because Empty");
+                }
+
                 Object.DestroyImmediate(component);
             });
+        }
+
+        MASyncParameterSequenceById FetchComponent(BuildContext ctx)
+        {
+            if (VRC_SdkBuilder.ActiveBuildType == VRC_SdkBuilder.BuildType.Test)
+            {
+                return null;
+            }
+            var components = ctx.AvatarRootTransform.GetComponentsInChildren<MASyncParameterSequenceById>(true);
+            if (components.Length == 0) return null;
+            if (components.Length > 1)
+            {
+                ErrorReport.ReportError(new Error("Multiple MASyncParameterSequenceById components found in the avatar. Only one is allowed."));
+                return null;
+            }
+            var component = components[0];
+            return component;
         }
 
         static Regex IgnoreSuffixRe = new Regex(@"\s*\(Clone\)$");
@@ -106,6 +135,11 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
                     default: return null;
                 }
             }
+        }
+
+        class State
+        {
+            public string AssetPath;
         }
 
         class Error : IError

@@ -2,6 +2,7 @@ using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -50,7 +51,7 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
 
                 var setting = MASyncParameterSequenceByIdSetting.instance;
                 var directory = setting.BaseDirectory;
-                var preferredAssetName = $"{ctx.AvatarRootObject.name} [{id}] SyncedParams";
+                var preferredAssetName = $"{IgnoreSuffix(ctx.AvatarRootObject.name)} [{id}] SyncedParams";
 
                 var assetPaths = Directory.Exists(setting.BaseDirectory) ? Directory.EnumerateFiles(setting.BaseDirectory, $"*{id}*", SearchOption.AllDirectories).ToArray() : new string[0];
                 if (assetPaths.Length > 1)
@@ -87,6 +88,10 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
                 Object.DestroyImmediate(component);
             });
         }
+
+        static Regex IgnoreSuffixRe = new Regex(@"\s*\(Clone\)$");
+
+        static string IgnoreSuffix(string name) => IgnoreSuffixRe.Replace(name, "");
 
         private static ModularAvatarSyncParameterSequence.Platform? CurrentPlatform
         {

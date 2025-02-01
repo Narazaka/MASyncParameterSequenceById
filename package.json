@@ -1,0 +1,17 @@
+{
+  "name": "net.narazaka.vrchat.ma-sync-parameter-sequence-by-id",
+  "version": "1.0.0",
+  "displayName": "MA Sync Parameter Sequence By Id",
+  "description": "MA Sync Parameter Sequence By Id",
+  "author": {
+    "name": "Narazaka",
+    "url": "https://github.com/Narazaka"
+  },
+  "license": "Zlib",
+  "type": "tool",
+  "url" : "https://github.com/Narazaka/MASyncParameterSequenceById.git",
+  "unity": "2022.3",
+  "vpmDependencies": {
+    "com.vrchat.worlds": ">=3.7.4"
+  }
+}

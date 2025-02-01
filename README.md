@@ -1,6 +1,6 @@
 # MA Sync Parameter Sequence By Id
 
-desc
+MA Sync Parameter Sequence を Blueprint ID で管理します。
 
 ## Install
 
@@ -16,7 +16,9 @@ https://github.com/Narazaka/MASyncParameterSequenceById/releases/latest から `
 
 ## Usage
 
-TODO
+アバタールートに「Add Component」から`MA Sync Parameter Sequence By Id`コンポーネントを付け、 Primary Platform を選びます。
+
+`Build & Publish`を押したときに記録されます。
 
 ## License
 

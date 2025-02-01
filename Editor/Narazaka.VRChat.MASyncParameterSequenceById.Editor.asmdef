@@ -1,0 +1,21 @@
+{
+    "name": "Narazaka.VRChat.MASyncParameterSequenceById.Editor",
+    "rootNamespace": "",
+    "references": [
+        "VRC.SDKBase",
+        "nadena.dev.ndmf",
+        "nadena.dev.modular-avatar.core",
+        "Narazaka.VRChat.MASyncParameterSequenceById"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

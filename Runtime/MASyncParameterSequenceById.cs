@@ -7,6 +7,6 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById
     [AddComponentMenu("MASyncParameterSequenceById")]
     public class MASyncParameterSequenceById : MonoBehaviour, IEditorOnly
     {
-        public ModularAvatarSyncParameterSequence.Platform PrimaryPlatform;
+        public ModularAvatarSyncParameterSequence.Platform PrimaryPlatform = ModularAvatarSyncParameterSequence.Platform.Android;
     }
 }

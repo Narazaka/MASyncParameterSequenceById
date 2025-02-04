@@ -42,7 +42,7 @@ namespace Narazaka.VRChat.MASyncParameterSequenceById.Editor
 
                 var setting = MASyncParameterSequenceByIdSetting.instance;
                 var directory = setting.BaseDirectory;
-                var preferredAssetName = $"{IgnoreSuffix(ctx.AvatarRootObject.name)} [{id}] SyncedParams";
+                var preferredAssetName = setting.GetPreferredAssetName(IgnoreSuffix(ctx.AvatarRootObject.name), id);
 
                 var assetPaths = Directory.Exists(setting.BaseDirectory) ? Directory.EnumerateFiles(setting.BaseDirectory, $"*{id}*.asset", SearchOption.AllDirectories).ToArray() : new string[0];
                 if (assetPaths.Length > 1)

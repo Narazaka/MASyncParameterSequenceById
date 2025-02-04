@@ -1,6 +1,6 @@
 {
   "name": "net.narazaka.vrchat.ma-sync-parameter-sequence-by-id",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "displayName": "MA Sync Parameter Sequence By Id",
   "description": "MA Sync Parameter Sequence を Blueprint ID で管理します",
   "author": {
